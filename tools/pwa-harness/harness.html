@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Receipt Family</title>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; connect-src 'self' https://script.google.com https://script.googleusercontent.com; manifest-src 'self'; worker-src 'self'; base-uri 'self'; form-action 'none'">
+<meta name="theme-color" content="#2563eb">
+<meta name="color-scheme" content="light dark">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Receipts">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="../../web/manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../web/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="../../web/icons/icon-192.png">
+<link rel="stylesheet" href="../../web/style.css">
+</head>
+<body>
+
+<!-- Setup: family code + who -->
+<main id="screen-setup" class="screen" hidden>
+  <header class="hero">
+    <img src="../../web/icons/icon-192.png" alt="" class="logo" width="84" height="84">
+    <h1>Receipt Family</h1>
+    <p class="sub">Snap a receipt. Check it. Save it.</p>
+  </header>
+  <section class="card">
+    <div id="setup-code-wrap">
+      <label for="setup-code">Family code</label>
+      <input id="setup-code" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Paste the family code">
+    </div>
+    <label id="setup-who-label">Your first name</label>
+    <input id="setup-who" type="text" autocomplete="given-name" autocapitalize="words" maxlength="20" aria-labelledby="setup-who-label" placeholder="Your first name">
+    <p id="setup-error" class="error" role="alert" hidden></p>
+    <div class="actions">
+      <button id="setup-go" type="button" class="btn primary">Continue</button>
+    </div>
+  </section>
+</main>
+
+<!-- Main -->
+<main id="screen-main" class="screen" hidden>
+  <header class="topbar">
+    <h1>Receipts</h1>
+    <button id="btn-settings" type="button" class="icon-btn" aria-label="Settings">
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+    </button>
+  </header>
+  <p class="hello">Hi <span id="who-name"></span></p>
+
+  <!-- Capture -->
+  <section id="capture" class="card">
+    <input id="file-cam" type="file" accept="image/*" capture="environment" hidden>
+    <input id="file-up" type="file" accept="image/*,application/pdf" multiple hidden>
+    <input id="file-add" type="file" accept="image/*,application/pdf" multiple hidden>
+    <div class="capture-btns">
+      <button id="btn-snap" type="button" class="btn big primary">
+        <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        <span>Snap receipt</span>
+      </button>
+      <button id="btn-upload" type="button" class="btn big">
+        <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
+        <span>Upload</span>
+      </button>
+    </div>
+    <p class="hint">Snap with the camera, or upload photos and PDFs. One receipt can have up to 6 pages.</p>
+  </section>
+
+  <!-- Working: preview + analyze -->
+  <section id="work" class="card" hidden>
+    <div id="thumbs" class="thumbs"></div>
+    <div class="actions pages-actions">
+      <button id="btn-addpage" type="button" class="btn">Add page</button>
+    </div>
+    <p id="pages-hint" class="hint small" hidden></p>
+    <div id="analyzing" class="analyzing" hidden>
+      <div class="spinner" aria-hidden="true"></div>
+      <span>Reading receipt...</span>
+    </div>
+    <p id="work-error" class="error" role="alert" hidden></p>
+
+    <form id="form" autocomplete="off" hidden novalidate>
+      <p id="proof-warn" class="warn" role="alert" hidden></p>
+      <p id="confidence" class="badge" hidden></p>
+      <label for="f-store">Store</label>
+      <input id="f-store" type="text" autocapitalize="words" placeholder="Store name">
+      <div class="row2">
+        <div>
+          <label for="f-date">Date</label>
+          <input id="f-date" type="date">
+        </div>
+        <div>
+          <label for="f-amount">Total ($)</label>
+          <input id="f-amount" type="text" inputmode="decimal" placeholder="0.00">
+        </div>
+      </div>
+      <p id="date-hint" class="hint small" hidden></p>
+      <label for="f-category">Category</label>
+      <select id="f-category"></select>
+      <label for="f-tax">Tax type</label>
+      <select id="f-tax"></select>
+      <label for="f-who">For whom</label>
+      <select id="f-who"></select>
+      <label for="f-note">Note</label>
+      <input id="f-note" type="text" placeholder="Optional">
+      <label for="f-items">Items</label>
+      <textarea id="f-items" rows="2" placeholder="Short summary"></textarea>
+      <p id="form-error" class="error" role="alert" hidden></p>
+      <div class="actions">
+        <button id="btn-save" type="submit" class="btn primary">Save</button>
+        <button id="btn-cancel" type="button" class="btn ghost">Cancel</button>
+      </div>
+    </form>
+    <div id="reread-row" class="actions" hidden>
+      <button id="btn-reread" type="button" class="btn">Read again with the new pages</button>
+    </div>
+    <div id="retry-row" class="actions" hidden>
+      <button id="btn-retry" type="button" class="btn primary">Try again</button>
+      <button id="btn-manual" type="button" class="btn">Enter by hand</button>
+      <button id="btn-cancel2" type="button" class="btn ghost">Cancel</button>
+    </div>
+  </section>
+
+  <!-- Recent -->
+  <section id="recent-sec" class="card">
+    <div class="sec-head">
+      <h2>Recent</h2>
+      <button id="btn-refresh" type="button" class="link">Refresh</button>
+    </div>
+    <p id="recent-msg" class="hint"></p>
+    <ul id="recent" class="list"></ul>
+  </section>
+</main>
+
+<!-- Settings -->
+<div id="settings" class="sheet" hidden>
+  <div class="sheet-card" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+    <h2 id="settings-title">Settings</h2>
+    <label id="set-who-label">Your first name</label>
+    <input id="set-who" type="text" autocomplete="given-name" autocapitalize="words" maxlength="20" aria-labelledby="set-who-label" placeholder="Your first name">
+    <label for="set-code">Family code</label>
+    <input id="set-code" type="password" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+    <label class="check"><input id="set-show" type="checkbox"> Show code</label>
+    <p id="set-error" class="error" role="alert" hidden></p>
+    <div class="actions">
+      <button id="set-save" type="button" class="btn primary">Done</button>
+      <button id="set-close" type="button" class="btn ghost">Cancel</button>
+    </div>
+    <p class="hint small" id="version"></p>
+  </div>
+</div>
+
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+<script src="mock.js"></script>
+<script src="../../web/app.js"></script>
+</body>
+</html>

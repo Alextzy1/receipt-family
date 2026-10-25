@@ -1,0 +1,17 @@
+# build outputs
+build/
+.gradle/
+*.apk
+*.aab
+dist/
+# secrets / local config
+*.jks
+*.keystore
+keystore.properties
+local.properties
+# misc
+.idea/
+*.iml
+.DS_Store
+__pycache__/
+android/.kotlin/
